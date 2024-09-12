@@ -48,12 +48,9 @@ describe('Testes automatizados da classe BIBLIOTECA', () => {
 
     test('Busca livros por autor', ()=>{
         biblioteca.adicionarLivro({"titulo" :'O pequeno principe', id : 1, "autor" : "rafael"})
-        expect(biblioteca.listarLivrosPorAutor().length).toBe(1)
+        expect(biblioteca.listarLivrosPorAutor('Rafael Castro').length).toEqual(0)
 
-        biblioteca.adicionarLivro({"titulo" :'O grande principe', id : 2, "autor" : "rafael"})
-        biblioteca.adicionarLivro({"titulo" :'O medio principe', id : 3, "autor" : "rafael"})
-
-        expect(biblioteca.listarLivrosPorAutor().length).toBe(3)
+        expect(biblioteca.listarLivrosPorAutor('rafael').length).toEqual(1)
     })
 
     test('Buscan livros de um autor que não existe', ()=>{
@@ -63,11 +60,11 @@ describe('Testes automatizados da classe BIBLIOTECA', () => {
 
     test('Busca livro por genero', ()=>{
         biblioteca.adicionarLivro({"titulo" :'O pequeno principe', id : 1, "autor" : "rafael", "genero" : "aventura"})
-        expect(biblioteca.listarLivrosPorGenero('aventura')).toBe(1)
+        expect(biblioteca.listarLivrosPorGenero('aventura').length).toBe(1)
     })
 
     test('Busca livro por genero não cadastrado', ()=>{
-        expect(biblioteca.listarLivrosPorGenero('aventura2')).toBe(0)
+        expect(biblioteca.listarLivrosPorGenero('aventura2').length).toBe(0)
     })
 
     test('Busca livros pelo ano', ()=>{
@@ -77,6 +74,15 @@ describe('Testes automatizados da classe BIBLIOTECA', () => {
 
     test('Busca livros pro um ano não cadastrado', ()=>{
         expect(biblioteca.listarLivrosPorAno(2400).length).toBe(0)
+    })
+
+    test('Altera dados do livro', ()=>{
+        biblioteca.adicionarLivro({"titulo" :'O pequeno principe', id : 1, "autor" : "rafael", "genero" : "aventura", "ano" : 2000})        
+
+        expect(biblioteca.listarLivrosPorAno(2500).length).toBe(0)
+        biblioteca.atualizarInformacaoLivro(1, {"titulo" :'O pequeno principe', id : 1, "autor" : "rafael", "genero" : "aventura", "ano" : 2500})
+        expect(biblioteca.listarLivrosPorAno(2500).length).toBe(1)
+        
     })
 
     //Teste relacionado aos menbros da biblioteca
@@ -126,21 +132,21 @@ describe('Testes automatizados da classe BIBLIOTECA', () => {
         biblioteca.adicionarLivro({"titulo" :'O pequeno principe', id : 1, "emprestado" : false})
         biblioteca.adicionarMembro({"id" : 1})
 
-        expect(biblioteca.emprestarLivro(1,1)).toBe(True)
+        expect(biblioteca.emprestarLivro(1,1)).toBe(true)
     })
 
     test('Emprestando um livro que não exite na biblioteca para um menbro', ()=>{
         biblioteca.adicionarLivro({"titulo" :'O pequeno principe', id : 1, "emprestado" : false})
         biblioteca.adicionarMembro({"id" : 1})
 
-        expect(biblioteca.emprestarLivro(2,1)).toBe(False)
+        expect(biblioteca.emprestarLivro(2,1)).toBe(false)
     })
 
     test('Emprestando um livro da biblioteca para um não menbro', ()=>{
         biblioteca.adicionarLivro({"titulo" :'O pequeno principe', id : 1, "emprestado" : false})
         biblioteca.adicionarMembro({"id" : 1})
 
-        expect(biblioteca.emprestarLivro(2,1055)).toBe(False)
+        expect(biblioteca.emprestarLivro(2,1055)).toBe(false)
     })    
 
     test('Verifica os livros emprestados', ()=>{
