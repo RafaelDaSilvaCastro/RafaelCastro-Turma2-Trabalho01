@@ -46,6 +46,38 @@ describe('Testes automatizados da classe BIBLIOTECA', () => {
         expect(biblioteca.listarLivros().length).toBe(4)
     })
 
+    test('Busca livros por autor', ()=>{
+        biblioteca.adicionarLivro({"titulo" :'O pequeno principe', id : 1, "autor" : "rafael"})
+        expect(biblioteca.listarLivrosPorAutor().length).toBe(1)
+
+        biblioteca.adicionarLivro({"titulo" :'O grande principe', id : 2, "autor" : "rafael"})
+        biblioteca.adicionarLivro({"titulo" :'O medio principe', id : 3, "autor" : "rafael"})
+
+        expect(biblioteca.listarLivrosPorAutor().length).toBe(3)
+    })
+
+    test('Buscan livros de um autor que não existe', ()=>{
+        biblioteca.adicionarLivro({"titulo" :'O pequeno principe', id : 1, "autor" : "rafael"})
+        expect(biblioteca.listarLivrosPorAutor('Rafael Castro').length).toBe(0)
+    })
+
+    test('Busca livro por genero', ()=>{
+        biblioteca.adicionarLivro({"titulo" :'O pequeno principe', id : 1, "autor" : "rafael", "genero" : "aventura"})
+        expect(biblioteca.listarLivrosPorGenero('aventura')).toBe(1)
+    })
+
+    test('Busca livro por genero não cadastrado', ()=>{
+        expect(biblioteca.listarLivrosPorGenero('aventura2')).toBe(0)
+    })
+
+    test('Busca livros pelo ano', ()=>{
+        biblioteca.adicionarLivro({"titulo" :'O pequeno principe', id : 1, "autor" : "rafael", "genero" : "aventura", "ano" : 2000})        
+        expect(biblioteca.listarLivrosPorAno(2000).length).toBe(1)
+    })
+
+    test('Busca livros pro um ano não cadastrado', ()=>{
+        expect(biblioteca.listarLivrosPorAno(2400).length).toBe(0)
+    })
 
     //Teste relacionado aos menbros da biblioteca
     test('Deve adicionar um novo menbro', ()=>{
@@ -88,12 +120,60 @@ describe('Testes automatizados da classe BIBLIOTECA', () => {
         const qtdAdd2 = biblioteca.listarMembros().length
         expect(biblioteca.listarMembros().length).toBe(4)
     })
-    // test('Teste da função de busca de um livro pelo titulo', ()=>{
-    //     const livro = {"titulo" :'O pequeno principe', id : 1}
-    //     biblioteca.adicionarLivro(livro)
+  
+    //Teste relacionados a emprestar Livros para Menbros
+    test('Emprestando um livro da biblioteca para um menbro', ()=>{
+        biblioteca.adicionarLivro({"titulo" :'O pequeno principe', id : 1, "emprestado" : false})
+        biblioteca.adicionarMembro({"id" : 1})
 
-    //     const resultado = biblioteca.buscarLivroPorTitulo('O pequeno principe');
-    //     expect(resultado).toContainEqual(livro);
-    //     })    
+        expect(biblioteca.emprestarLivro(1,1)).toBe(True)
+    })
+
+    test('Emprestando um livro que não exite na biblioteca para um menbro', ()=>{
+        biblioteca.adicionarLivro({"titulo" :'O pequeno principe', id : 1, "emprestado" : false})
+        biblioteca.adicionarMembro({"id" : 1})
+
+        expect(biblioteca.emprestarLivro(2,1)).toBe(False)
+    })
+
+    test('Emprestando um livro da biblioteca para um não menbro', ()=>{
+        biblioteca.adicionarLivro({"titulo" :'O pequeno principe', id : 1, "emprestado" : false})
+        biblioteca.adicionarMembro({"id" : 1})
+
+        expect(biblioteca.emprestarLivro(2,1055)).toBe(False)
+    })    
+
+    test('Verifica os livros emprestados', ()=>{
+        biblioteca.adicionarLivro({"titulo" :'O pequeno principe', id : 1, "emprestado" : false})
+        biblioteca.adicionarLivro({"titulo" :'O grande principe', id : 2, "emprestado" : false})
+        biblioteca.adicionarMembro({"id" : 1})
+
+        biblioteca.emprestarLivro(1,1)
+        expect(biblioteca.listarLivrosEmprestados().length).toBe(1)
+
+        biblioteca.emprestarLivro(2,1)  
+        expect(biblioteca.listarLivrosEmprestados().length).toBe(2)
+
+    })
+
+    test('Verifica livros disponiveis', ()=>{
+        biblioteca.adicionarLivro({"titulo" :'O pequeno principe', id : 1, "emprestado" : false})
+        biblioteca.adicionarLivro({"titulo" :'O grande principe', id : 2, "emprestado" : false})
+        biblioteca.adicionarMembro({"id" : 1})
+
+        biblioteca.emprestarLivro(1,1)
+        expect(biblioteca.listarLivrosDisponiveis().length).toBe(1)
+    })
+
+    //Teste sobre devolver livro
+    test('Devolvendo livro', ()=>{
+        biblioteca.adicionarLivro({"titulo" :'O pequeno principe', id : 1, "emprestado" : false})
+        biblioteca.adicionarLivro({"titulo" :'O grande principe', id : 2, "emprestado" : false})
+        biblioteca.adicionarMembro({"id" : 1})
+
+        biblioteca.emprestarLivro(1,1)
+        biblioteca.devolverLivro(1)
+        expect(biblioteca.listarLivrosDisponiveis().length).toBe(2) 
+    })
 
 });
